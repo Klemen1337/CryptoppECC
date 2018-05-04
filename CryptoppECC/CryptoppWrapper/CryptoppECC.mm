@@ -208,11 +208,11 @@ std::string base64_decode(std::string const& encoded_string)
     AutoSeededRandomPool prng;
     
     //get private key generated
-    CryptoPP::ECIES_BC<CryptoPP::ECP>::Decryptor d0(prng,ASN1::secp112r1());
+    CryptoPP::ECIES<CryptoPP::ECP>::Decryptor d0(prng,ASN1::secp112r1());
     PrintPrivateKey(d0.GetKey());
     
     //get public key
-    CryptoPP::ECIES_BC<CryptoPP::ECP>::Encryptor e0(d0);
+    CryptoPP::ECIES<CryptoPP::ECP>::Encryptor e0(d0);
     PrintPublicKey(e0.GetKey());
     
     //encrypt the message
@@ -239,7 +239,7 @@ std::string base64_decode(std::string const& encoded_string)
         
         
         
-        CryptoPP::ECIES_BC<CryptoPP::ECP>::Encryptor encryptor;
+        CryptoPP::ECIES<CryptoPP::ECP>::Encryptor encryptor;
         
         //curve used is secp256k1
         encryptor.AccessKey().AccessGroupParameters().Initialize(ASN1::secp256k1());
@@ -291,7 +291,7 @@ std::string base64_decode(std::string const& encoded_string)
         
         
         
-        CryptoPP::ECIES_BC<CryptoPP::ECP>::Decryptor decryptor;
+        CryptoPP::ECIES<CryptoPP::ECP>::Decryptor decryptor;
         
         //curve used is secp256k1
         //make decryptor's access key using decoded private exponent's value
@@ -306,7 +306,7 @@ std::string base64_decode(std::string const& encoded_string)
          Integer x;
          x.Decode(decoder, decoder.MaxRetrievable());
          
-         CryptoPP::ECIES_BC<CryptoPP::ECP>::Decryptor decryptor;
+         CryptoPP::ECIES<CryptoPP::ECP>::Decryptor decryptor;
          decryptor.AccessKey().Initialize(ASN1::secp256k1(), x);
          */
         
@@ -324,7 +324,7 @@ std::string base64_decode(std::string const& encoded_string)
         
         
         //get public key from 'decryptor'
-        CryptoPP::ECIES_BC<CryptoPP::ECP>::Encryptor encryptor(decryptor);
+        CryptoPP::ECIES<CryptoPP::ECP>::Encryptor encryptor(decryptor);
         PrintPublicKey(encryptor.GetKey());
         
         
@@ -380,7 +380,7 @@ string cDecrypt(std::string encryptedMessageInBase64 ,  std::string  privateKeyE
         x.Decode(ss, (size_t)ss.MaxRetrievable(), Integer::UNSIGNED);
       
         
-        CryptoPP::ECIES_BC<CryptoPP::ECP>::Decryptor decryptor;
+        CryptoPP::ECIES<CryptoPP::ECP>::Decryptor decryptor;
         
         //curve used is secp256k1
         //make decryptor's access key using decoded private exponent's value
@@ -424,7 +424,7 @@ string CEncrypt(std::string message ,  std::string  compressedPublicKeyPointInBa
         //since the key is in base-64 format use Base64Decoder
         StringSource ss(compressedPublicKeyPointInBase64, true, new CryptoPP::Base64Decoder);
         
-        CryptoPP::ECIES_BC<CryptoPP::ECP>::Encryptor encryptor;
+        CryptoPP::ECIES<CryptoPP::ECP>::Encryptor encryptor;
         
         encryptor.AccessKey().AccessGroupParameters().Initialize(curve);
         

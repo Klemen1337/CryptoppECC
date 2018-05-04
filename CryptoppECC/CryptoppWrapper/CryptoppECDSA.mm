@@ -61,6 +61,7 @@ using CryptoPP::DL_GroupParameters_EC;
 using CryptoPP::OID;
 
 
+using CryptoPP::byte;
 
 @implementation CryptoppECDSA
 
@@ -462,7 +463,7 @@ std::string removeLast(std::string x)
 {
     StringSource ss(compressedPublicKeyPointInBase64, true, new CryptoPP::Base64Decoder);
     
-    CryptoPP::ECIES_BC<CryptoPP::ECP>::Encryptor encryptor;
+    CryptoPP::ECIES<CryptoPP::ECP>::Encryptor encryptor;
     encryptor.AccessKey().AccessGroupParameters().Initialize(curve);
     
     //get point on the used curve

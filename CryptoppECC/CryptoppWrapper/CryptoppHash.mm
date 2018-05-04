@@ -9,6 +9,7 @@
 #include "md5.h"
 #include "sha.h"
 
+using CryptoPP::byte;
 
 @implementation CryptoppMD5
 -(NSData*)getHashValue:(NSData*)data {
