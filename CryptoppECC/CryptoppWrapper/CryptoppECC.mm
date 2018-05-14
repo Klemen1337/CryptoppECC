@@ -9,8 +9,6 @@
 #import "CryptoppECC.h"
 #import "base64.h"
 
-
-
 #include <iostream>
 using std::ostream;
 using std::cout;
@@ -65,8 +63,6 @@ using CryptoPP::PK_Decryptor;
 using CryptoPP::g_nullNameValuePairs;
 
 
-
-
 void PrintPrivateKey(const DL_PrivateKey_EC<ECP>& key, ostream& out = cout);
 void PrintPublicKey(const DL_PublicKey_EC<ECP>& key, ostream& out = cout);
 
@@ -77,19 +73,16 @@ static const string message("e8e5896b6940fbf4a8f3a107ff58e63b25353739");
 
 @implementation CryptoppECC
 
-
 static const std::string base64_chars =
 "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 "abcdefghijklmnopqrstuvwxyz"
 "0123456789+/";
 
-static inline bool is_base64(unsigned char c)
-{
+static inline bool is_base64(unsigned char c) {
     return (isalnum(c) || (c == '+') || (c == '/'));
 }
 
-std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len)
-{
+std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_len) {
     std::string ret;
     int i = 0;
     int j = 0;
@@ -104,36 +97,37 @@ std::string base64_encode(unsigned char const* bytes_to_encode, unsigned int in_
             char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
             char_array_4[3] = char_array_3[2] & 0x3f;
             
-            for(i = 0; (i <4) ; i++)
+            for(i = 0; (i <4) ; i++) {
                 ret += base64_chars[char_array_4[i]];
+            }
             i = 0;
         }
     }
     
-    if (i)
-    {
-        for(j = i; j < 3; j++)
+    if (i) {
+        for(j = i; j < 3; j++) {
             char_array_3[j] = '\0';
+        }
         
         char_array_4[0] = (char_array_3[0] & 0xfc) >> 2;
         char_array_4[1] = ((char_array_3[0] & 0x03) << 4) + ((char_array_3[1] & 0xf0) >> 4);
         char_array_4[2] = ((char_array_3[1] & 0x0f) << 2) + ((char_array_3[2] & 0xc0) >> 6);
         char_array_4[3] = char_array_3[2] & 0x3f;
         
-        for (j = 0; (j < i + 1); j++)
+        for (j = 0; (j < i + 1); j++) {
             ret += base64_chars[char_array_4[j]];
+        }
         
-        while((i++ < 3))
+        while((i++ < 3)) {
             ret += '=';
-        
+        }
     }
     
     return ret;
-    
 }
 
-std::string base64_decode(std::string const& encoded_string)
-{
+
+std::string base64_decode(std::string const& encoded_string) {
     size_t in_len = encoded_string.size();
     int i = 0;
     int j = 0;
@@ -144,67 +138,63 @@ std::string base64_decode(std::string const& encoded_string)
     while (in_len-- && ( encoded_string[in_] != '=') && is_base64(encoded_string[in_])) {
         char_array_4[i++] = encoded_string[in_]; in_++;
         if (i ==4) {
-            for (i = 0; i <4; i++)
+            for (i = 0; i <4; i++) {
                 char_array_4[i] = base64_chars.find(char_array_4[i]);
+            }
             
             char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
             char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
             char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
             
-            for (i = 0; (i < 3); i++)
+            for (i = 0; (i < 3); i++) {
                 ret += char_array_3[i];
+            }
             i = 0;
         }
     }
     
     if (i) {
-        for (j = i; j <4; j++)
+        for (j = i; j <4; j++) {
             char_array_4[j] = 0;
+        }
         
-        for (j = 0; j <4; j++)
+        for (j = 0; j <4; j++) {
             char_array_4[j] = base64_chars.find(char_array_4[j]);
+        }
         
         char_array_3[0] = (char_array_4[0] << 2) + ((char_array_4[1] & 0x30) >> 4);
         char_array_3[1] = ((char_array_4[1] & 0xf) << 4) + ((char_array_4[2] & 0x3c) >> 2);
         char_array_3[2] = ((char_array_4[2] & 0x3) << 6) + char_array_4[3];
         
-        for (j = 0; (j < i - 1); j++) ret += char_array_3[j];
+        for (j = 0; (j < i - 1); j++) {
+            ret += char_array_3[j];
+        }
     }
     
     return ret;
 }
 
 
--(std::string)cString:(NSString*)string
-{
-    if (string.length)
-    {
+-(std::string)cString:(NSString*)string {
+    if (string.length) {
       return [string cStringUsingEncoding:NSUTF8StringEncoding];
-    }
-    else
-    {
+    } else {
         return "";
     }
-    
 }
 
--(NSString*)objCString:(std::string)string
-{
-    if (string.length())
-    {
-        return [NSString stringWithCString:string.c_str()
-                                  encoding:[NSString defaultCStringEncoding]];
-    }
-    else
-    {
+
+-(NSString*)objCString:(std::string)string {
+    if (string.length()) {
+        return [NSString stringWithCString:string.c_str() encoding:NSUTF8StringEncoding];
+    } else {
         return @"";
     }
 }
 
 
 
--(void)randomKeysEncryptDecrypt //random gen of keys
-{
+-(void)randomKeysEncryptDecrypt {//random gen of keys
     AutoSeededRandomPool prng;
     
     //get private key generated
@@ -224,20 +214,15 @@ std::string base64_decode(std::string const& encoded_string)
     StringSource ss2 (em0, true, new PK_DecryptorFilter(prng, d0, new StringSink(dm0)) );
 }
 
--(void)cEncrypt:(std::string) public_point //best working code for public key
-{
-    try
-    {
+-(void)cEncrypt:(std::string) public_point { //best working code for public key
+    try {
         AutoSeededRandomPool prng;
         
         //public key is a point consisting of "public key point x" and "public key point y"
         //compressed public key also known as "public-point" formed using point-compression of public key
         
-        
         //since the key is in base-64 format use Base64Decoder
         StringSource ss(public_point, true, new CryptoPP::Base64Decoder);
-        
-        
         
         CryptoPP::ECIES<CryptoPP::ECP>::Encryptor encryptor;
         
@@ -247,8 +232,8 @@ std::string base64_decode(std::string const& encoded_string)
         //get point on the used curve
         ECP::Point point;
         encryptor.GetKey().GetGroupParameters().GetCurve().DecodePoint(point, ss, (size_t)ss.MaxRetrievable());
-       IFDBG(cout << "X: " << std::hex << point.x << endl);
-       IFDBG(cout << "Y: " << std::hex << point.y << endl);
+        IFDBG(cout << "X: " << std::hex << point.x << endl);
+        IFDBG(cout << "Y: " << std::hex << point.y << endl);
         
         //set encryptor's public element
         encryptor.AccessKey().SetPublicElement(point);
@@ -258,38 +243,26 @@ std::string base64_decode(std::string const& encoded_string)
         
         PrintPublicKey(encryptor.GetKey());
         
-        
         string em0; // encrypted message
         StringSource ss1(message, true, new PK_EncryptorFilter(prng, encryptor, new StringSink(em0) ) );
-        IFDBG(cout<<"encrypted msg: "<<em0<<"  and its length: "<<em0.length()<<endl);
-    }
-    catch(const CryptoPP::Exception& ex)
-    {
+        // IFDBG(cout<<"encrypted msg: "<<em0<<"  and its length: "<<em0.length()<<endl);
+    } catch(const CryptoPP::Exception& ex) {
         std::cerr << ex.what() << endl;
     }
-    
-    
 }
 
--(void)cDecrypt :(std::string) exponent//best working code for private key
-{
-   
-    try
-    {
+
+-(void)cDecrypt :(std::string) exponent { //best working code for private key
+    try {
         AutoSeededRandomPool prng;
         
         /**use this **/
         
-        
         //since the key is in base-64 format use Base64Decoder
         StringSource ss(exponent, true , new CryptoPP::Base64Decoder);
         
-      
-        
         Integer x;
         x.Decode(ss, (size_t)ss.MaxRetrievable(), Integer::UNSIGNED);
-        
-        
         
         CryptoPP::ECIES<CryptoPP::ECP>::Decryptor decryptor;
         
@@ -310,13 +283,11 @@ std::string base64_decode(std::string const& encoded_string)
          decryptor.AccessKey().Initialize(ASN1::secp256k1(), x);
          */
         
-        
-        
-        
         //check whether decryptor's access key is valid or not
         bool valid = decryptor.AccessKey().Validate(prng, 3);
-        if(!valid)
+        if(!valid) {
             decryptor.AccessKey().ThrowIfInvalid(prng, 3);
+        }
         
         IFDBG(cout << "Exponent is valid for P-256k1" << endl);
         
@@ -331,46 +302,36 @@ std::string base64_decode(std::string const& encoded_string)
         // encrypt the message using public key
         string em0;
         StringSource ss1(message, true, new PK_EncryptorFilter(prng, encryptor, new StringSink(em0) ) );
-        IFDBG(cout<<"encrypted msg: "<<em0<<"  and its length: "<<em0.length()<<endl);
+        // IFDBG(cout<<"encrypted msg: "<<em0<<"  and its length: "<<em0.length()<<endl);
         
         
         //decrypt the message using private key
         string dm0;
         StringSource ss2 (em0, true, new PK_DecryptorFilter(prng, decryptor, new StringSink(dm0) ) );
-        IFDBG(cout <<"decrypted msg: "<< dm0<<"  and its length: "<<dm0.length() << endl);
-        
-    }
-    catch(const CryptoPP::Exception& ex)
-    {
+        // IFDBG(cout <<"decrypted msg: "<< dm0<<"  and its length: "<<dm0.length() << endl);
+    } catch(const CryptoPP::Exception& ex) {
         std::cerr << ex.what() << endl;
     }
-    
 }
 
 
--(void)encrypt:(NSString*)public_point
-{
-    
+-(void)encrypt:(NSString*)public_point {
     [self cEncrypt:[self cString:public_point]];
 }
 
 
--(void)decrypt:(NSString*)private_point
-{
-   
+-(void)decrypt:(NSString*)private_point {
     [self cDecrypt:[self cString:private_point]];
 }
 
 
 //this will be used for decryption
-string cDecrypt(std::string encryptedMessageInBase64 ,  std::string  privateKeyExponentInBase64 ,CryptoPP::OID curve)
-{
-    IFDBG(cout<<"input encrypted msg in base 64: "<<encryptedMessageInBase64<<"  and its length: "<<encryptedMessageInBase64.length()<<endl);
+string cDecrypt(std::string encryptedMessageInBase64 ,  std::string  privateKeyExponentInBase64 ,CryptoPP::OID curve) {
+    // IFDBG(cout<<"input encrypted msg in base 64: "<<encryptedMessageInBase64<<"  and its length: "<<encryptedMessageInBase64.length()<<endl);
     encryptedMessageInBase64=base64_decode(encryptedMessageInBase64);
    
     string decryptedMessage;
-    try
-    {
+    try {
         AutoSeededRandomPool prng;
         
         //since the 'privateKeyExponent' is in base-64 format use Base64Decoder
@@ -388,20 +349,17 @@ string cDecrypt(std::string encryptedMessageInBase64 ,  std::string  privateKeyE
         
         //check whether decryptor's access key is valid or not
         bool valid = decryptor.AccessKey().Validate(prng, 3);
-        if(!valid)
-        {
+        if(!valid) {
             IFDBG(cout<<"invalid private key exponent");
             return "";
         }
-        IFDBG(cout<<"\n\ndecryption algo. name "<<decryptor.StaticAlgorithmName());
+        // IFDBG(cout<<"\n\ndecryption algo. name "<<decryptor.StaticAlgorithmName());
         //decrypt the message using private key
-        IFDBG(cout<<"\n\nparam spec in decrypt: "<<prng.GenerateWord32());
+        // IFDBG(cout<<"\n\nparam spec in decrypt: "<<prng.GenerateWord32());
         StringSource ss2 (encryptedMessageInBase64, true, new PK_DecryptorFilter(prng, decryptor, new StringSink(decryptedMessage) ) );
-        IFDBG(cout <<"\n\ndecrypted msg: "<< decryptedMessage<<"  and its length: "<<decryptedMessage.length() << endl);
+        // IFDBG(cout <<"\n\ndecrypted msg: "<< decryptedMessage<<"  and its length: "<<decryptedMessage.length() << endl);
         
-    }
-    catch(const CryptoPP::Exception& ex)
-    {
+    } catch(const CryptoPP::Exception& ex) {
         std::cerr << ex.what() << endl;
         return "";
     }
@@ -410,11 +368,9 @@ string cDecrypt(std::string encryptedMessageInBase64 ,  std::string  privateKeyE
 
 
 //this will be used for encryption
-string CEncrypt(std::string message ,  std::string  compressedPublicKeyPointInBase64 , CryptoPP::OID curve )
-{
+string CEncrypt(std::string message, std::string compressedPublicKeyPointInBase64, CryptoPP::OID curve) {
     string encryptedMessage;
-    try
-    {
+    try {
         AutoSeededRandomPool prng;
         
         //public key is a point consisting of "public key point x" and "public key point y"
@@ -437,8 +393,7 @@ string CEncrypt(std::string message ,  std::string  compressedPublicKeyPointInBa
         encryptor.AccessKey().SetPublicElement(point);
         
         //check whether the encryptor's access key thus formed is valid or not
-        if (!encryptor.AccessKey().Validate(prng, 3))
-        {
+        if (!encryptor.AccessKey().Validate(prng, 3)) {
             IFDBG(cout<<"invalid public key");
             return "";
         }
@@ -446,9 +401,7 @@ string CEncrypt(std::string message ,  std::string  compressedPublicKeyPointInBa
         StringSource ss1(message, true, new PK_EncryptorFilter(prng, encryptor, new StringSink(encryptedMessage) ) );
         IFDBG(cout<<"\n\nencryption algo. name "<<encryptor.StaticAlgorithmName());
        
-    }
-    catch(const CryptoPP::Exception& ex)
-    {
+    } catch(const CryptoPP::Exception& ex) {
         std::cerr << ex.what() << endl;
         return "";
     }
@@ -458,11 +411,10 @@ string CEncrypt(std::string message ,  std::string  compressedPublicKeyPointInBa
     return encryptedMessage;
 }
 
--(CryptoPP::OID)curve:(CurveType)curveType
-{
+
+-(CryptoPP::OID)curve:(CurveType)curveType {
     CryptoPP::OID curve;
-    switch (curveType)
-    {
+    switch (curveType) {
         case CurveType_secp112r1:
             curve=CryptoPP::ASN1::secp112r1();
             break;
@@ -528,20 +480,19 @@ string CEncrypt(std::string message ,  std::string  compressedPublicKeyPointInBa
     }
     return curve;
 }
--(NSString*) decrypt:(NSString*) encryptedMessageInBase64 : (NSString*) privateKeyExponentInBase64 curve:(CurveType)curveType
-{
+
+
+-(NSString*) decrypt:(NSString*) encryptedMessageInBase64 : (NSString*) privateKeyExponentInBase64 curve:(CurveType)curveType {
     return [self objCString:(cDecrypt([self cString:encryptedMessageInBase64], [self cString:privateKeyExponentInBase64] ,[self curve:curveType]))];
 }
 
--(NSString*) encrypt:(NSString*) message : (NSString*) compressedPublicKeyPointInBase64 curve:(CurveType)curveType
-{
-    
+
+-(NSString*) encrypt:(NSString*) message : (NSString*) compressedPublicKeyPointInBase64 curve:(CurveType)curveType {
     return [self objCString:(CEncrypt([self cString:message], [self cString:compressedPublicKeyPointInBase64],[self curve:curveType]))];
 }
 
 
-void PrintPrivateKey(const DL_PrivateKey_EC<ECP>& key, ostream& out)
-{
+void PrintPrivateKey(const DL_PrivateKey_EC<ECP>& key, ostream& out) {
     const std::ios_base::fmtflags flags = out.flags();
     
     // Group parameters
@@ -574,8 +525,8 @@ void PrintPrivateKey(const DL_PrivateKey_EC<ECP>& key, ostream& out)
     out.flags(flags);
 }
 
-void PrintPublicKey(const DL_PublicKey_EC<ECP>& key, ostream& out)
-{
+
+void PrintPublicKey(const DL_PublicKey_EC<ECP>& key, ostream& out) {
     const std::ios_base::fmtflags flags = out.flags();
     
     // Group parameters
@@ -601,10 +552,6 @@ void PrintPublicKey(const DL_PublicKey_EC<ECP>& key, ostream& out)
     out << endl;
     out.flags(flags);
 }
-
-
-
-
 
 
 @end
